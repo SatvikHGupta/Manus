@@ -1,13 +1,125 @@
-logs
-*.log
-node_modules
-dist
-dist-ssr
-*.local
+# ============================================
+# Dependencies
+# ============================================
+node_modules/
+
+# ============================================
+# Production Builds
+# ============================================
+dist/
+build/
+
+# ============================================
+# Vite
+# ============================================
+.vite/
+vite.svg
+.vite
+
+# ============================================
+# Environment Variables
+# ============================================
 .env
-*.zip
+.env.*
+!.env.example
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============================================
+# Firebase
+# ============================================
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+firestore.rules
+
+# Emulator exports (optional)
+firebase-export/
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+playwright-report/
+test-results/
+
+# ============================================
+# IDEs
+# ============================================
+
+# VS Code
 .vscode/*
 !.vscode/extensions.json
-.idea
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# JetBrains
+.idea/
+*.iml
+
+# ============================================
+# OS Files
+# ============================================
 .DS_Store
-firestore.rules
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+._*
+
+# ============================================
+# Cache
+# ============================================
+.eslintcache
+.cache/
+.parcel-cache/
+.npm/
+.pnpm-store/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# ============================================
+# TypeScript
+# ============================================
+*.tsbuildinfo
+
+# ============================================
+# Temporary Files
+# ============================================
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+
+# ============================================
+# Runtime Files
+# ============================================
+*.pid
+*.pid.lock
+*.seed
+
+# ============================================
+# Local Database Files
+# ============================================
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Misc
+# ============================================
+*.local

@@ -29,7 +29,7 @@ export default defineConfig([
       },
     },
     rules: {
-      // BUG-R: was '^[A-Z_]' — dead imports from drawing code would pass silently
+      // BUG-R: was '^[A-Z_]' - dead imports from drawing code would pass silently
       'no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
 
       // eslint-plugin-react-hooks v6+ ships React-Compiler-derived rules that

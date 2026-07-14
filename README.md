@@ -1,6 +1,6 @@
 # Manus
 
-Manus turns typed text into realistic handwritten pages, rendered live in the browser and exportable as PNG, PDF, SVG, or ZIP. It runs entirely client-side — no backend required — with optional Google sign-in and cloud backup via Firebase.
+Manus turns typed text into realistic handwritten pages, rendered live in the browser and exportable as PNG, PDF, SVG, or ZIP. It runs entirely client-side - no backend required - with optional Google sign-in and cloud backup via Firebase.
 
 **Live app:** [manus-jet.vercel.app](https://manus-jet.vercel.app)
 
@@ -8,16 +8,16 @@ Manus turns typed text into realistic handwritten pages, rendered live in the br
 
 ## Features
 
-- **Realistic handwriting rendering** — dozens of built-in handwriting fonts, plus support for uploading your own font files.
-- **Deep customization, per page** — every page carries its own independent settings: font, ink (blur, flow, drop shadow, pen type, smudge), line behavior (spacing, slope, baseline drift), word/letter noise, paper style (lined, grid, dot, cornell, indian, or blank), margins, and page size.
-- **Quick-style presets** — one-click "Quick styles" for paper (Notebook, Legal Pad, Graph...) and ink/noise (Clean Print, Messy Notes, Careful Study, Shaky).
-- **Notebooks & pages** — organize work into notebooks, each holding up to 50 pages, with drag-to-reorder, cover colors/emoji, and a dashboard with grid/list views.
-- **Color tags** — inline `<tag>` syntax for coloring, highlighting, underlining, and strikethrough within the text itself.
-- **Rich text tools** — find & replace across pages, `.docx`/`.txt` import, command palette (`Cmd/Ctrl+K`), full undo/redo history per page, guided onboarding tour.
-- **Export** — PNG (per page or all pages), multi-page PDF, SVG, ZIP, clipboard copy, and native share sheet, all with live progress reporting for multi-page jobs.
-- **Optional cloud sync** — Google sign-in, automatic hourly backup, and cooperative single-device session enforcement, all running on Firebase's free (Spark) tier with no server code.
-- **Fully responsive** — dedicated desktop, tablet, and mobile layouts, the latter built around an always-visible canvas with a chat-style composer.
-- **Works offline / guest mode** — everything works with zero configuration; signing in only adds cross-device sync.
+- **Realistic handwriting rendering** - dozens of built-in handwriting fonts, plus support for uploading your own font files.
+- **Deep customization, per page** - every page carries its own independent settings: font, ink (blur, flow, drop shadow, pen type, smudge), line behavior (spacing, slope, baseline drift), word/letter noise, paper style (lined, grid, dot, cornell, indian, or blank), margins, and page size.
+- **Quick-style presets** - one-click "Quick styles" for paper (Notebook, Legal Pad, Graph...) and ink/noise (Clean Print, Messy Notes, Careful Study, Shaky).
+- **Notebooks & pages** - organize work into notebooks, each holding up to 50 pages, with drag-to-reorder, cover colors/emoji, and a dashboard with grid/list views.
+- **Color tags** - inline `<tag>` syntax for coloring, highlighting, underlining, and strikethrough within the text itself.
+- **Rich text tools** - find & replace across pages, `.docx`/`.txt` import, command palette (`Cmd/Ctrl+K`), full undo/redo history per page, guided onboarding tour.
+- **Export** - PNG (per page or all pages), multi-page PDF, SVG, ZIP, clipboard copy, and native share sheet, all with live progress reporting for multi-page jobs.
+- **Optional cloud sync** - Google sign-in, automatic hourly backup, and cooperative single-device session enforcement, all running on Firebase's free (Spark) tier with no server code.
+- **Fully responsive** - dedicated desktop, tablet, and mobile layouts, the latter built around an always-visible canvas with a chat-style composer.
+- **Works offline / guest mode** - everything works with zero configuration; signing in only adds cross-device sync.
 
 ---
 
@@ -55,7 +55,7 @@ npm install
 npm run dev
 ```
 
-The app opens in guest mode by default — no configuration needed. Notebooks and pages are saved locally in IndexedDB, and settings persist via `localStorage`.
+The app opens in guest mode by default - no configuration needed. Notebooks and pages are saved locally in IndexedDB, and settings persist via `localStorage`.
 
 ### Available scripts
 
@@ -70,11 +70,11 @@ The app opens in guest mode by default — no configuration needed. Notebooks an
 
 ## Optional: Firebase Setup (Google sign-in + cloud backup)
 
-Firebase is fully wired into the app already — enabling it is purely a matter of configuration, no code changes needed. Without it, the app runs exactly as-is in guest mode.
+Firebase is fully wired into the app already - enabling it is purely a matter of configuration, no code changes needed. Without it, the app runs exactly as-is in guest mode.
 
 1. Create a project at [console.firebase.google.com](https://console.firebase.google.com), add a web app, and copy the config object.
 2. Enable **Google** as a sign-in provider under **Authentication → Sign-in method**, and add your deployed domain under **Authorized domains**.
-3. Create a **Firestore Database** (production mode) and publish the rules in `firestore.rules` — they're scoped exactly to this app's data shape (`users/{uid}` + `users/{uid}/notebooks/{id}`), so no other path needs a rule.
+3. Create a **Firestore Database** (production mode) and publish the rules in `firestore.rules` - they're scoped exactly to this app's data shape (`users/{uid}` + `users/{uid}/notebooks/{id}`), so no other path needs a rule.
 4. Copy `.env.example` to `.env` and fill in the six `VITE_FIREBASE_*` values from step 1:
 
    ```bash
@@ -84,27 +84,20 @@ Firebase is fully wired into the app already — enabling it is purely a matter 
 5. Restart `npm run dev` (Vite only reads `.env` at boot).
 6. For production, mirror the same six environment variables in your hosting provider's dashboard (e.g. Vercel → Project Settings → Environment Variables) and redeploy.
 
-No Firebase Admin SDK, Cloud Functions, or paid (Blaze) plan is required — everything runs on the client SDK and Firestore's free Spark tier.
+No Firebase Admin SDK, Cloud Functions, or paid (Blaze) plan is required - everything runs on the client SDK and Firestore's free Spark tier.
 
 ---
 ## Architecture Notes
 
 - **Rendering pipeline:** `HandwritingPage` → `PaperLayer` (SVG background: lines/grid/dot/cornell/indian) → `InkLayer` (tokenizes text, applies ink/pen effects) → `LineRenderer` (final DOM output with per-line noise).
 - **Deterministic noise:** all "randomness" (line slope, baseline drift, word jitter, etc.) is generated by a seeded PRNG, so the same page renders identically every time rather than re-jittering on every render.
-- **Per-page settings:** every page stores its own complete settings object — changing paper style, font, or ink on one page never affects any other page.
+- **Per-page settings:** every page stores its own complete settings object - changing paper style, font, or ink on one page never affects any other page.
 - **Responsive layout:** `useBreakpointSync` is the single source of truth for switching between desktop, tablet, and mobile layouts.
 - **Storage split:** page/notebook/font content lives in IndexedDB (large, can grow); UI and settings preferences live in `localStorage` (small, synchronous). Cloud backup, when enabled, mirrors notebooks to Firestore as one document per notebook.
-- **Single-device sessions:** when signed in, a cooperative `activeSessionId` field in Firestore is used to detect and log out other active sessions — enforced entirely client-side to stay on Firebase's free tier (no Cloud Functions).
-
----
-
-## Known Limitations
-
-- Notebook count (10), page count (50/notebook), and custom font count (20) caps are enforced at the application level, not in Firestore security rules — a signed-in user could technically write past these limits directly against Firestore. Not a concern for a personal/small-scale deployment; worth hardening before wider public use.
-- No automated test suite yet — verification currently relies on `npm run lint`, `npm run build`, and manual testing.
+- **Single-device sessions:** when signed in, a cooperative `activeSessionId` field in Firestore is used to detect and log out other active sessions - enforced entirely client-side to stay on Firebase's free tier (no Cloud Functions).
 
 ---
 
 ## Author
 
-**Satvik Hemant Gupta** — [github.com/SatvikHGupta](https://github.com/SatvikHGupta)
+**Satvik Hemant Gupta** - [github.com/SatvikHGupta](https://github.com/SatvikHGupta)
