@@ -1,0 +1,103 @@
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/500.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+
+@import 'tailwindcss';
+
+/* Class-based dark mode - Tailwind v4 requires explicit variant declaration */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Accent palette (light mode only, by design) - from the Midnight Blue /
+   Raisin Black gradient. Used sparingly as borders, hovers, focus rings,
+   and selected/active states so light mode reads as "white with a touch
+   of this color" rather than either fully white or fully this gradient. */
+@theme {
+  --color-accent:      #003366; /* Midnight Blue */
+  --color-accent-ink:  #242124; /* Raisin Black */
+}
+
+:root {
+  --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  font-family: var(--font-ui);
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  overflow: hidden;
+  margin: 0;
+  background: transparent;
+  color: #171717;
+}
+.dark body {
+  color: #f5f5f5;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .print-mobile-page { display: flex !important; }
+  body { overflow: visible !important; background: white !important; }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 99px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
+
+/* Driver.js theme overrides to match Manus design system */
+.driver-popover {
+  background: #ffffff;
+  color: #171717;
+  border-radius: 1rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  font-family: var(--font-ui);
+  padding: 1rem 1.1rem;
+  max-width: 300px;
+}
+.dark .driver-popover {
+  background: #171717;
+  color: #f5f5f5;
+}
+.driver-popover-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.driver-popover-description {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #525252;
+  margin-top: 0.35rem;
+}
+.dark .driver-popover-description {
+  color: #a3a3a3;
+}
+.driver-popover-progress-text {
+  font-size: 0.65rem;
+  color: #a3a3a3;
+}
+.driver-popover-footer button {
+  font-size: 0.75rem;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  text-shadow: none;
+  font-family: var(--font-ui);
+}
+.driver-popover-next-btn {
+  background: #171717 !important;
+  color: #ffffff !important;
+}
+.dark .driver-popover-next-btn {
+  background: #f5f5f5 !important;
+  color: #171717 !important;
+}
+.driver-popover-prev-btn {
+  background: transparent !important;
+  color: #737373 !important;
+}
+.driver-popover-close-btn {
+  color: #a3a3a3 !important;
+}

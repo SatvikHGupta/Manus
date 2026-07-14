@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+
+  <title>Manus - Text to Handwriting</title>
+  <meta name="description" content="Convert typed text into realistic handwriting. Export as PNG, PDF, or ZIP. Free, client-side, no data collected." />
+
+  <link rel="canonical" href="https://manus-jet.vercel.app/" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Manus - Text to Handwriting" />
+  <meta property="og:description" content="Type text, get handwriting. Export as PNG or PDF. Free and open source." />
+  <meta property="og:url"         content="https://manus-jet.vercel.app/" />
+  <meta property="og:image"       content="https://manus-jet.vercel.app/og-image.png" />
+  <meta name="twitter:image"      content="https://manus-jet.vercel.app/og-image.png" />
+  <meta name="twitter:card"       content="summary_large_image" />
+
+  <!-- Google Fonts - handwriting fonts cached at export via getFontEmbedCSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Indie+Flower&family=Kalam:wght@300;400&family=Patrick+Hand&family=Architects+Daughter&family=Coming+Soon&family=Just+Another+Hand&family=Reenie+Beanie&family=Bad+Script&family=Nanum+Pen+Script&family=Loved+by+the+King&family=Gochi+Hand&family=Sriracha&family=Handlee&family=Schoolbell&family=Dawning+of+a+New+Day&family=Sue+Ellen+Francisco&family=Zeyada&family=Cedarville+Cursive&family=Kristi&family=Dancing+Script:wght@400;600&family=Sacramento&family=Shadows+Into+Light&family=Homemade+Apple&family=Great+Vibes&family=Pacifico&family=Satisfy&family=Cookie&family=Allura&family=Alex+Brush&family=Parisienne&family=Marck+Script&family=Meddon&family=Qwigley&family=Rouge+Script&family=Permanent+Marker&family=Rock+Salt&family=Gloria+Hallelujah&family=Covered+By+Your+Grace&family=Amatic+SC:wght@400;700&family=Patrick+Hand+SC&family=Mrs+Saint+Delafield&family=Pinyon+Script&family=Tangerine:wght@400;700&family=Euphoria+Script&family=Licorice&family=Petit+Formal+Script&family=Shadows+Into+Light+Two&family=Give+You+Glory&family=Waiting+for+the+Sunrise&display=swap"
+    rel="stylesheet"
+  />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Manus",
+    "url": "https://manus-jet.vercel.app/",
+    "description": "Convert typed text into handwriting-style output. Export as PNG, PDF, or ZIP.",
+    "applicationCategory": "UtilitiesApplication",
+    "softwareVersion": "2.0.0",
+    "operatingSystem": "Any",
+    "author": {
+      "@type": "Person",
+      "name": "Satvik Hemant Gupta",
+      "url": "https://github.com/SatvikHGupta"
+    },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem('manus-v2-settings');
+        var dark = raw ? JSON.parse(raw)?.state?.darkMode : false;
+        document.documentElement.classList.toggle('dark', !!dark);
+        document.documentElement.classList.toggle('light', !dark);
+      } catch (e) { /* ignore - default light class from the html tag stands */ }
+    })();
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
