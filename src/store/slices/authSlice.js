@@ -111,7 +111,7 @@ export function createAuthSlice(set, get) {
       set({ user: null, lastSyncError: null });
       get().addToast?.({
         type: 'info',
-        message: 'You were signed out here \u2014 this account is now signed in on another device. Your notes on this device are safe.',
+        message: 'You were signed out here - this account is now signed in on another device. Your notes on this device are safe.',
       });
     },
 

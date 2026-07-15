@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useStore } from '../../store/index.js';
+import { Spinner } from '../shared/Spinner.jsx';
 
 function nextUtcHourLabel() {
   const next = Math.ceil(Date.now() / 3_600_000) * 3_600_000;
@@ -36,13 +37,13 @@ export function BackupStatusBar() {
       <div className="flex items-center gap-1.5">
         {syncing ? (
           <>
-            <Cloud size={13} className="animate-pulse" />
+            <Spinner size={13} />
             Backing up now...
           </>
         ) : lastSyncError ? (
           <>
             <CloudOff size={13} className="text-red-500" />
-            Last backup failed &mdash; next attempt at {nextUtcHourLabel()}
+            Last backup failed - next attempt at {nextUtcHourLabel()}
           </>
         ) : (
           <>

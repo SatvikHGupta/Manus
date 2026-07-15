@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
-import { Upload, Loader2 } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { Modal } from '../shared/Modal.jsx';
+import { Spinner } from '../shared/Spinner.jsx';
 import { useStore, useSettings } from '../../store/index.js';
 import { splitTextIntoPageChunks } from '../../utils/text/overflow.js';
 import { MAX_PAGES } from '../../constants/limits.js';
@@ -101,7 +102,7 @@ export function ImportModal() {
           disabled={busy}
           className="flex flex-col items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-accent/25 dark:border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600 dark:hover:border-neutral-500 transition-colors disabled:opacity-50"
         >
-          {busy ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+          {busy ? <Spinner size={20} /> : <Upload size={20} />}
           <span className="text-xs">{busy ? 'Reading file...' : 'Choose a .txt or .docx file'}</span>
         </button>
       </div>

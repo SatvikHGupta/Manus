@@ -4,6 +4,7 @@ import { Image, FileText, Archive, Copy, Printer, Images, FileCode, X, Share2 } 
 import { useStore }   from '../../store/index.js';
 import { useExport }  from '../../hooks/useExport.js';
 import { useEscapeKey } from '../../hooks/useEscapeKey.js';
+import { Spinner } from '../shared/Spinner.jsx';
 
 export function ExportModal({ pageRefs }) {
   const open    = useStore(s => s.exportModalOpen);
@@ -143,7 +144,10 @@ export function ExportModal({ pageRefs }) {
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-center text-neutral-400 mt-4 animate-pulse">Rendering...</p>
+                <div className="flex items-center justify-center gap-2 mt-4">
+                  <Spinner size={14} />
+                  <p className="text-xs text-neutral-400">Rendering...</p>
+                </div>
               )
             )}
             </div>

@@ -1,4 +1,5 @@
 import { cn } from '../../utils/cn.js';
+import { Spinner } from './Spinner.jsx';
 
 const VARIANTS = {
   primary:   'bg-accent dark:bg-white text-white dark:text-black hover:opacity-85',
@@ -15,13 +16,14 @@ const SIZES = {
 };
 
 export function Button({
-  children, variant = 'primary', size = 'md',
+  children, variant = 'primary', size = 'md', loading = false,
   className, disabled, onClick, ...props
 }) {
+  const spinnerColor = variant === 'primary' ? 'text-white dark:text-black' : '';
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={cn(
         'inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-opacity disabled:opacity-40',
         VARIANTS[variant] ?? VARIANTS.primary,
@@ -30,6 +32,7 @@ export function Button({
       )}
       {...props}
     >
+      {loading && <Spinner size={14} className={spinnerColor} />}
       {children}
     </button>
   );

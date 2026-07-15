@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, User, Loader2 } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { useStore } from '../../store/index.js';
 import { Logo } from '../shared/Logo.jsx';
 import { Button } from '../shared/Button.jsx';
@@ -51,8 +51,8 @@ export function LoginPage() {
               <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mb-6">
                 Back up your notebooks and pick up where you left off on any device.
               </p>
-              <Button size="lg" onClick={handleSignIn} disabled={signingIn} className="w-full gap-2">
-                {signingIn ? <Loader2 size={16} className="animate-spin" /> : <User size={16} />}
+              <Button size="lg" onClick={handleSignIn} loading={signingIn} className="w-full gap-2">
+                {!signingIn && <User size={16} />}
                 {signingIn ? 'Signing in...' : 'Continue with Google'}
               </Button>
             </>

@@ -29,8 +29,8 @@ export function MobileHeader({ onMenuClick }) {
   }, [menuOpen]);
 
   return (
-    <header className="h-11 shrink-0 flex items-center justify-between gap-2 px-3 bg-white dark:bg-neutral-950 border-b border-accent/10 dark:border-neutral-800 no-print">
-      <div className="flex items-center gap-1 min-w-0">
+    <header className="h-12 shrink-0 flex items-center justify-between gap-2 px-3 bg-white dark:bg-neutral-950 border-b border-accent/10 dark:border-neutral-800 no-print">
+      <div className="flex items-center gap-1.5 min-w-0 flex-1">
         <button
           onClick={onMenuClick}
           title="Page settings"
@@ -47,20 +47,20 @@ export function MobileHeader({ onMenuClick }) {
         </button>
         <Logo size={15} onClick={() => { window.location.hash = '#/home'; }} />
         {currentNotebook && (
-          <InlineNotebookName notebook={currentNotebook} className="text-xs text-neutral-400" />
+          <InlineNotebookName notebook={currentNotebook} className="text-xs text-neutral-400 min-w-0 flex-1" />
         )}
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-1.5 shrink-0">
         <SaveIndicator />
 
         <button
           onClick={() => setExportModalOpen(true)}
+          title="Export"
           data-tour="export-btn"
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent dark:bg-white text-white dark:text-black text-xs font-medium ml-1"
+          className="flex items-center justify-center p-2 rounded-lg bg-accent dark:bg-white text-white dark:text-black ml-0.5"
         >
-          <Download size={12} />
-          Export
+          <Download size={13} />
         </button>
 
         <div className="relative" ref={menuRef}>
@@ -95,6 +95,8 @@ export function MobileHeader({ onMenuClick }) {
             </div>
           )}
         </div>
+
+        <div className="w-px h-5 bg-accent/15 dark:bg-neutral-700 mx-0.5" />
 
         <AccountButton />
       </div>

@@ -117,6 +117,15 @@ export function Dashboard({ onOpenNotebook }) {
           <h1 className="text-xl font-semibold flex items-center gap-2.5">
             <span className="w-1 h-5 rounded-full bg-accent dark:bg-white" />
             Notebooks
+            <span
+              className={`text-xs font-normal px-2 py-0.5 rounded-full ${
+                notebooks.length >= MAX_NOTEBOOKS
+                  ? 'bg-red-500/10 text-red-500'
+                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
+              }`}
+            >
+              {notebooks.length}/{MAX_NOTEBOOKS}
+            </span>
           </h1>
           <div className="flex items-center gap-2 flex-wrap">
             <select

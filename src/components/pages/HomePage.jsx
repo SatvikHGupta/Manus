@@ -41,7 +41,7 @@ export function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
+    <div className="h-screen overflow-y-auto flex flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
       <header className="flex items-center justify-between px-6 py-4 max-w-5xl w-full mx-auto">
         <Logo size={20} />
         <div className="flex items-center gap-2">

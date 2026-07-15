@@ -73,7 +73,7 @@ export function ControlsSidebar({ forceOpen = false }) {
 
   if (forceOpen) {
     return (
-      <div data-tour="sidebar" className="h-full bg-white dark:bg-neutral-950 overflow-y-auto no-print">
+      <div data-tour="sidebar" className="h-full w-full flex flex-col overflow-hidden bg-white dark:bg-neutral-950 no-print">
         {content}
       </div>
     );

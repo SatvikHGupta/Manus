@@ -34,8 +34,19 @@ export async function signInWithGoogle(deviceId) {
     throw new Error("Sign-in isn't set up yet - Firebase hasn't been configured for this app.");
   }
   const result = await signInWithPopup(auth, googleProvider);
-  await touchUserProfile(result.user);
-  await claimSession(result.user.uid, deviceId);
+  try {
+    await touchUserProfile(result.user);
+    await claimSession(result.user.uid, deviceId);
+  } catch (err) {
+    // Firebase Auth itself succeeded here, but the app-level sign-in
+    // (profile write + session claim) didn't. Without this, the auth-state
+    // listener in authSlice would still flip `user` non-null the instant
+    // signInWithPopup resolved above, showing "signed in" everywhere even
+    // though sign-in as a whole failed - undo it so signIn()'s catch block
+    // and the resulting UI state agree with each other.
+    try { await signOut(auth); } catch { /* ignore */ }
+    throw err;
+  }
   return result.user;
 }
 

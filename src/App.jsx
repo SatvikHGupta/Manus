@@ -98,6 +98,9 @@ export default function App() {
   const isLogin     = hash === '#/login';
   const isTerms     = hash === '#/terms';
   const onDashboard = hash === '#/dashboard';
+  // True only when MainLayout (the actual notebook editor) is on screen -
+  // this is the sole thing OnboardingTour should ever run against, since
+  // every one of its steps targets an element that only exists there.
 
   // Keeps the URL bar honest - content itself is picked below from
   // `unlocked` directly (not from hash), so this never causes a flash;
@@ -113,9 +116,11 @@ export default function App() {
 
   // Per-route title - hash routing means there's no server-rendered <title>
   // to fall back on for any of these, this is the only thing that ever sets it.
+  const inEditor = unlocked && !isHome && !isLogin && !onDashboard;
+
   const pageTitle = (() => {
     if (isLogin && !unlocked) return 'Sign in \u00b7 Manus';
-    if (!unlocked || isHome) return 'Manus \u2014 Handwriting from typed text';
+    if (!unlocked || isHome) return 'Manus - Handwriting from typed text';
     if (onDashboard) return 'Notebooks \u00b7 Manus';
     const nb = notebooks.find(n => n.id === currentNotebookId);
     return nb ? `${nb.name} \u00b7 Manus` : 'Manus';
@@ -156,7 +161,7 @@ export default function App() {
               <ImportModal />
               <AddPageModal />
               <CommandPalette />
-              <OnboardingTour />
+              {inEditor && <OnboardingTour />}
             </>
           )}
 

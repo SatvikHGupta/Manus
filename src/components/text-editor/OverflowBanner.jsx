@@ -38,7 +38,7 @@ export function OverflowBanner() {
 
   return (
     <div className="flex items-center justify-between gap-2 px-3 py-2 mx-4 mt-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 shrink-0">
-      <span>Page full &mdash; continue on a new page?</span>
+      <span>Page full - continue on a new page?</span>
       <div className="flex items-center gap-1 shrink-0">
         <button
           onClick={handleContinue}
