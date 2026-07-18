@@ -5,6 +5,7 @@ import {
 import { pushAllToFirestore, pullMissingNotebooksFromFirestore } from '../../firebase/syncService.js';
 import { firebaseEnabled } from '../../firebase/config.js';
 import { getDeviceId } from '../../utils/deviceId.js';
+import { MANUAL_SYNC_COOLDOWN_MS } from '../../constants/limits.js';
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -178,13 +179,25 @@ export function createAuthSlice(set, get) {
         });
       }
       set({ syncing: true });
-      await pushAllToFirestore(user.uid);
+      const { flushedDeletes = [] } = await pushAllToFirestore(user.uid, get().pendingCloudDeletes);
+      if (flushedDeletes.length) {
+        set({ pendingCloudDeletes: get().pendingCloudDeletes.filter(id => !flushedDeletes.includes(id)) });
+      }
       set({ syncing: false });
     },
 
-    // Manual "sync now" - not on a timer, just an on-demand version of the
-    // same push, e.g. for a button in the account menu.
+    // Manual "sync now" - an on-demand version of the same push, gated by
+    // a cooldown so it can't be used to hammer past the hourly cadence
+    // (protects the shared Firestore write quota). Enforced here, in the
+    // action itself, not just as a disabled prop on the button, so any
+    // future second call site can't accidentally bypass it. Based on
+    // lastSyncAt, which only ever moves on an actual successful backup
+    // (see syncService.js) - so a failed attempt never traps someone in
+    // a 15-minute wait to retry something that's already broken.
     syncNow: async () => {
+      if (get().syncing) return; // already in flight
+      const { lastSyncAt } = get();
+      if (lastSyncAt && Date.now() - lastSyncAt < MANUAL_SYNC_COOLDOWN_MS) return;
       await get().flushAndSyncNow();
     },
   };

@@ -39,6 +39,10 @@ export function createNotebooksSlice(set, get) {
     notebooks: [],
     currentNotebookId: null,
     notebooksReady: false,
+    // Ids of notebooks deleted locally that still need their Firestore
+    // doc removed. Flushed by pushAllToFirestore on the normal backup
+    // cadence (hourly or manual) - not an instant/separate sync trigger.
+    pendingCloudDeletes: [],
 
     // One-time (per app load) setup: makes sure at least one notebook
     // exists, assigns any pages saved before Notebooks existed to one
@@ -142,7 +146,7 @@ export function createNotebooksSlice(set, get) {
       } catch { /* ignore */ }
 
       const remaining = notebooks.filter(n => n.id !== id);
-      set({ notebooks: remaining });
+      set({ notebooks: remaining, pendingCloudDeletes: [...get().pendingCloudDeletes, id] });
 
       if (get().currentNotebookId === id && remaining[0]) {
         await get().switchNotebook(remaining[0].id);

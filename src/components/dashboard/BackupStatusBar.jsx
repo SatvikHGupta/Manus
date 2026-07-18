@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useStore } from '../../store/index.js';
 import { Spinner } from '../shared/Spinner.jsx';
+import { Tooltip } from '../shared/Tooltip.jsx';
+import { MANUAL_SYNC_COOLDOWN_MS } from '../../constants/limits.js';
 
 function nextUtcHourLabel() {
   const next = Math.ceil(Date.now() / 3_600_000) * 3_600_000;
@@ -10,6 +12,14 @@ function nextUtcHourLabel() {
 
 function timeLabel(ms) {
   return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function cooldownState(lastSyncAt) {
+  const remainingMs = lastSyncAt ? MANUAL_SYNC_COOLDOWN_MS - (Date.now() - lastSyncAt) : 0;
+  return {
+    active: remainingMs > 0,
+    minutesLeft: Math.max(1, Math.ceil(remainingMs / 60_000)),
+  };
 }
 
 export function BackupStatusBar() {
@@ -32,6 +42,19 @@ export function BackupStatusBar() {
   // matches AccountButton's own "invisible unless relevant" pattern.
   if (!user) return null;
 
+  const { active: cooldownActive, minutesLeft: cooldownMinutesLeft } = cooldownState(lastSyncAt);
+
+  const syncButton = (
+    <button
+      onClick={syncNow}
+      disabled={syncing || cooldownActive}
+      className="flex items-center gap-1 hover:text-neutral-800 dark:hover:text-neutral-200 disabled:opacity-50 transition-colors"
+    >
+      <RefreshCw size={11} />
+      Sync now
+    </button>
+  );
+
   return (
     <div className="flex items-center justify-between px-3 py-2 mb-5 rounded-lg bg-neutral-50 dark:bg-neutral-900/60 border border-accent/15 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400">
       <div className="flex items-center gap-1.5">
@@ -53,14 +76,9 @@ export function BackupStatusBar() {
           </>
         )}
       </div>
-      <button
-        onClick={syncNow}
-        disabled={syncing}
-        className="flex items-center gap-1 hover:text-neutral-800 dark:hover:text-neutral-200 disabled:opacity-50 transition-colors"
-      >
-        <RefreshCw size={11} />
-        Sync now
-      </button>
+      {cooldownActive
+        ? <Tooltip label={`Wait ${cooldownMinutesLeft}m before syncing again`} side="top">{syncButton}</Tooltip>
+        : syncButton}
     </div>
   );
 }

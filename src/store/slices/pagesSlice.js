@@ -1,6 +1,7 @@
 import { MAX_PAGES } from '../../constants/limits.js';
 import { DEFAULT_PAGE, DEFAULT_SETTINGS } from '../defaults.js';
 import { idbPutPage, idbDeletePage, idbGetAllPages, idbGetPagesByNotebookId } from '../../utils/idb/pages.js';
+import { idbPutNotebook } from '../../utils/idb/notebooks.js';
 import { buildFindRegex } from '../../utils/text/findReplace.js';
 
 const persistDebounceTimers = new Map(); // pageId -> timeout id
@@ -209,6 +210,18 @@ export function createPagesSlice(set, get) {
       set({ pages: newPages, currentPageIndex: newIndex });
       get().clearHistoryForPage?.(deleted.id);
       try { await idbDeletePage(deleted.id); } catch { /* ignore */ }
+
+      // Deleting a page doesn't touch any surviving page's updatedAt, so
+      // nothing else signals "this notebook changed" - bump the parent
+      // notebook explicitly. (Also fixes Dashboard's "recently edited"
+      // sort not picking up a page deletion, same root cause.)
+      if (deleted.notebookId) {
+        const { notebooks } = get();
+        const updated = notebooks.map(n => n.id === deleted.notebookId ? { ...n, updatedAt: Date.now() } : n);
+        set({ notebooks: updated });
+        const nb = updated.find(n => n.id === deleted.notebookId);
+        if (nb) { try { await idbPutNotebook(nb); } catch { /* ignore */ } }
+      }
     },
 
     reorderPages: async (oldIndex, newIndex) => {

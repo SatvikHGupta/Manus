@@ -40,6 +40,7 @@ export const useStore = create(
           hasEnteredApp:    s.hasEnteredApp,
           newPageMode:      s.newPageMode,
           currentNotebookId: s.currentNotebookId,
+          pendingCloudDeletes: s.pendingCloudDeletes,
         }),
 
         merge: (persisted, current) => ({
@@ -54,6 +55,7 @@ export const useStore = create(
           hasEnteredApp:    persisted?.hasEnteredApp  ?? false,
           newPageMode:      persisted?.newPageMode     ?? 'duplicate',
           currentNotebookId: persisted?.currentNotebookId ?? null,
+          pendingCloudDeletes: persisted?.pendingCloudDeletes ?? [],
         }),
 
         onRehydrateStorage: () => (state) => {

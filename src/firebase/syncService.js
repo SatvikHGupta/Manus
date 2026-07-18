@@ -1,14 +1,20 @@
-import { collection, doc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db, firebaseEnabled } from './config.js';
 import { idbGetAllNotebooks, idbPutNotebook } from '../utils/idb/notebooks.js';
 import { idbGetAllPages, idbPutPage } from '../utils/idb/pages.js';
 
-// Pushes every local notebook (and its pages) to Firestore as one document
-// per notebook. This is a full snapshot on every call, not an incremental
-// diff - deliberately simple so there's no separate "pending changes"
-// bookkeeping that could itself get out of sync. Called on an hourly
-// timer while signed in (see authSlice) - local IndexedDB is never
-// cleared or touched by this, it's a one-way push, cache stays intact.
+// Pushes every local notebook (and its pages) that's actually changed
+// since it was last successfully backed up, to Firestore as one document
+// per notebook. A notebook's "changed since" timestamp is the max of its
+// own updatedAt and every one of its pages' updatedAt - computed here at
+// backup time rather than tracked via scattered manual bump calls, so any
+// future page mutation that correctly touches page.updatedAt (the
+// obviously-correct thing to do anyway) is picked up automatically. Also
+// flushes any pending notebook deletions (see pendingCloudDeletes) on
+// this same cadence - deletions aren't synced instantly, only whenever a
+// backup runs (hourly or manual), same as everything else. Called on an
+// hourly timer while signed in (see authSlice) - local IndexedDB is never
+// cleared or touched for content, only lastBackedUpAt bookkeeping.
 // Firestore hard-caps a single document at 1MB. Nesting every page's text +
 // settings inside one document per notebook means a notebook with many/long
 // pages could someday cross that limit - checked up front (with a safety
@@ -25,13 +31,16 @@ function estimateByteSize(value) {
   }
 }
 
-export async function pushAllToFirestore(uid) {
+export async function pushAllToFirestore(uid, pendingDeletes = []) {
   if (!firebaseEnabled || !uid) return { error: 'Firebase is not configured.' };
   try {
     const [notebooks, allPages] = await Promise.all([idbGetAllNotebooks(), idbGetAllPages()]);
     const skipped = [];
     for (const nb of notebooks) {
       const pages = allPages.filter(p => p.notebookId === nb.id);
+      const dirtyAt = Math.max(nb.updatedAt ?? 0, ...pages.map(p => p.updatedAt ?? 0));
+      if (nb.lastBackedUpAt && dirtyAt <= nb.lastBackedUpAt) continue; // unchanged since last successful backup
+
       const payload = {
         id: nb.id,
         name: nb.name,
@@ -48,7 +57,17 @@ export async function pushAllToFirestore(uid) {
         continue;
       }
       await setDoc(doc(db, 'users', uid, 'notebooks', nb.id), payload);
+      try { await idbPutNotebook({ ...nb, lastBackedUpAt: Date.now() }); } catch { /* retried next cycle regardless */ }
     }
+
+    const flushedDeletes = [];
+    for (const id of pendingDeletes) {
+      try {
+        await deleteDoc(doc(db, 'users', uid, 'notebooks', id));
+        flushedDeletes.push(id);
+      } catch { /* leave queued, retried next cycle */ }
+    }
+
     const backupError = skipped.length
       ? `Too large to back up: ${skipped.join(', ')}. Split these into more notebooks.`
       : null;
@@ -57,7 +76,7 @@ export async function pushAllToFirestore(uid) {
       lastBackupStatus: backupError ? 'partial' : 'ok',
       lastBackupError: backupError,
     }, { merge: true });
-    return { error: backupError, notebookCount: notebooks.length };
+    return { error: backupError, notebookCount: notebooks.length, flushedDeletes };
   } catch (err) {
     const message = err?.message ?? 'Backup failed.';
     try {
@@ -66,7 +85,7 @@ export async function pushAllToFirestore(uid) {
         lastBackupError: message,
       }, { merge: true });
     } catch { /* if even the status write fails, the caller's toast still covers it */ }
-    return { error: message };
+    return { error: message, flushedDeletes: [] };
   }
 }
 
@@ -97,6 +116,7 @@ export async function pullMissingNotebooksFromFirestore(uid) {
         updatedAt: remote.updatedAt ?? Date.now(),
         order: remote.order ?? 0,
         pinned: !!remote.pinned,
+        lastBackedUpAt: Date.now(),
       });
 
       for (const page of remote.pages ?? []) {
